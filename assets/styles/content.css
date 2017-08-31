@@ -1,19 +1,24 @@
+/*
+Yes it is terrible that these all have to have !importants on them
+But it's probably better than inline styles
+*/
+
 .content-validated{
-	background: rgba(139, 195, 74, 0.6);
-    display: inline-block;
-	position: relative;
+	background: rgba(139, 195, 74, 0.6) !important;
+    display: inline-block !important;
+	position: relative !important;
 }
 
 .content-validated::before{
 	content: "";
-	position: absolute;
-	margin-left: 3px;
-	margin-top: 4px;
-	width: 14px;
-	height: 8px;
-	border-bottom: solid 3px #8BC34A;
-	border-left: solid 3px #8BC34A;
-	transform: rotate(-45deg) translateY(-50%);
-	right: -22px;
-	top: 0;
+	position: absolute !important;
+	margin-left: 3px !important;
+	margin-top: 4px !important;
+	width: 14px !important;
+	height: 8px !important;
+	border-bottom: solid 3px #8BC34A !important;
+	border-left: solid 3px #8BC34A !important;
+	transform: rotate(-45deg) translateY(-50%) !important;
+	left: -20px !important;
+	top: 0px !important;
 }

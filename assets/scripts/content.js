@@ -48,7 +48,10 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         // Checks if node does not match the search string regex
         // Checks if node has already been validated (TODO)
 
-        if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) ) {
+        if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1 ) {
+            // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
+            //     - this still allows for one cell to find multiple matches though!!!
+            // || typeof validationStatus[id] !== 'undefined' - checks if this cell string has already been searched for and found
             // Abandon ship and move on to the next item in the loop
             continue;
         }
@@ -92,7 +95,7 @@ chrome.runtime.onMessage.addListener(function(workbook) {
                 if (thisCell.v) {
                     // Check for this content on the page
                     var value = thisCell.v;
-                    findAndReplace(cleanString(value, true), '<span class="content-validated" title="' + cell + '">' + value + '</span>', null, cell);
+                    findAndReplace(cleanString(value, true), '<span class="content-validated" title="Validated against cell ' + cell + '">' + value + '</span>', null, cell);
 
                     // Add this item to the report
                     report.push( [value, validationStatus[cell]] )
