@@ -56,8 +56,14 @@ function findAndReplace(searchText, replacement, searchNode, id) {
             continue;
         }
 
-        // Update validationStatus object to know if we found this instance of the string
-        validationStatus[id] = true;
+        // Update validation status to show number of matches
+        if( typeof validationStatus[id] == 'undefined' ){
+            validationStatus[id] = 1;
+        }else{
+            validationStatus[id] = validationStatus[id]+1;
+        }
+
+        //validationStatus[id] = true;
 
         // Actually replace content with decorative span
         var parent = currentNode.parentNode,
