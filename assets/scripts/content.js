@@ -22,6 +22,7 @@ function cleanString(str, cleanForRegex) {
 }
 
 // Modified from https://j11y.io/javascript/find-and-replace-text-with-javascript/
+// TODO this should iterate through all nodes and see if it matches one of the items in the list, not the opposite - we need to be able to track negatives as well 
 function findAndReplace(searchText, replacement, searchNode, id) {
     if (!searchText || typeof replacement === 'undefined') {
         // Throw error here if you want...
@@ -44,10 +45,10 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         if (currentNode.nodeType === 1 && excludes.indexOf(currentNode.nodeName.toLowerCase()) === -1) {
             findAndReplace(searchText, replacement, currentNode, id);
         }
+
         // Checks if node is NOT text
         // Checks if node does not match the search string regex
-        // Checks if node has already been validated (TODO)
-
+        // Checks if node has already been validated (TODO) - this is an issue because its not actually searching the page vertically since it has to loop through each node in the DOM
         if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1 ) {
             // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
             //     - this still allows for one cell to find multiple matches though!!!
