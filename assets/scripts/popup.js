@@ -45,8 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // END content from https://github.com/sheetjs/js-xlsx
 
     function validateContent(workbook) {
-        console.log( workbook )
-            window.workbook = workbook;
+        window.workbook = workbook;
 
         // Inject content CSS
         chrome.tabs.insertCSS(null, {
@@ -70,15 +69,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Push workbook content to the current tab to be accessible by content script
         chrome.tabs.query({
             "active": true,
-            "currentWindow" : true
+            "currentWindow": true
         }, function(tabArray) {
             var currentTabId = tabArray[0].id;
-            chrome.tabs.sendMessage(currentTabId, workbook)
+            chrome.tabs.sendMessage(currentTabId, workbook);
         });
     }
 
     // Bind event listener to file input field
     var fileInput = document.getElementById('file-input');
     fileInput.addEventListener('change', handleFile, false);
+
+    chrome.runtime.onMessage.addListener(function(msg, sender) {
+        // First, validate the message's structure
+        if ((msg.from === 'content') && (msg.subject === 'loading')) {
+            // Enable the page-action for the requesting tab
+            document.getElementById('content-validator').classList.add('loading');
+        }
+
+        if ((msg.from === 'content') && (msg.subject === 'complete')) {
+            // Enable the page-action for the requesting tab
+            document.getElementById('content-validator').classList.remove('loading');
+        }
+
+    });
 
 }, false);

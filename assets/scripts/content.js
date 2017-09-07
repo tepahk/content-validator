@@ -9,11 +9,13 @@ function cleanString(str, cleanForRegex) {
 
     var newStr = str,
         regex = new RegExp(String.fromCharCode(160), "g");
+
+    newStr = newStr.toString();
     newStr = newStr.trim();
     newStr = newStr.replace(regex, " ");
     newStr = newStr.replace(/  /g, " ");
     newStr = newStr.replace(/&nbsp;/g, " ");
-    if( cleanForRegex ){
+    if (cleanForRegex) {
         // Escape all regex characters
         newStr = newStr.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     }
@@ -31,10 +33,10 @@ function findAndReplace(searchText, replacement, searchNode, id) {
 
     // This regex current ignores case!!
     var regex = typeof searchText === 'string' ?
-        new RegExp('^'+searchText+'$', 'gi') : searchText,
+        new RegExp('^' + searchText + '$', 'gi') : searchText,
         childNodes = (searchNode || document.body).childNodes,
         cnLength = childNodes.length,
-        excludes = ['html','head','style','title','link','meta','script','object','iframe'];
+        excludes = ['html', 'head', 'style', 'title', 'link', 'meta', 'script', 'object', 'iframe'];
 
     while (cnLength--) {
         var currentNode = childNodes[cnLength],
@@ -49,7 +51,7 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         // Checks if node is NOT text
         // Checks if node does not match the search string regex
         // Checks if node has already been validated (TODO) - this is an issue because its not actually searching the page vertically since it has to loop through each node in the DOM
-        if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1 ) {
+        if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1) {
             // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
             //     - this still allows for one cell to find multiple matches though!!!
             // || typeof validationStatus[id] !== 'undefined' - checks if this cell string has already been searched for and found
@@ -58,10 +60,10 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         }
 
         // Update validation status to show number of matches
-        if( typeof validationStatus[id] == 'undefined' ){
+        if (typeof validationStatus[id] == 'undefined') {
             validationStatus[id] = 1;
-        }else{
-            validationStatus[id] = validationStatus[id]+1;
+        } else {
+            validationStatus[id] = validationStatus[id] + 1;
         }
 
         //validationStatus[id] = true;
@@ -95,6 +97,11 @@ chrome.runtime.onMessage.addListener(function(workbook) {
             bodyContent = document.getElementsByTagName('body')[0].innerHTML,
             sheets = workbook["SheetNames"];
 
+        chrome.runtime.sendMessage({
+            from: 'content',
+            subject: 'loading'
+        });
+
         sheets.forEach(function(sheetName) {
             var sheetData = workbook["Sheets"][sheetName];
             for (var cell in sheetData) {
@@ -105,7 +112,7 @@ chrome.runtime.onMessage.addListener(function(workbook) {
                     findAndReplace(cleanString(value, true), '<span class="content-validated" title="Validated against cell ' + cell + '">' + value + '</span>', null, cell);
 
                     // Add this item to the report
-                    report.push( [value, validationStatus[cell]] )
+                    report.push([value, validationStatus[cell]])
 
                     // TODO: still not finding the 4 words in the intro section?
                     // TODO: still not finding contnet in the global nav
@@ -115,30 +122,43 @@ chrome.runtime.onMessage.addListener(function(workbook) {
             }
         })
 
+
+        chrome.runtime.sendMessage({
+            from: 'content',
+            subject: 'complete'
+        });
+
         // Generate a new worksheet from the array of arrays we created
         var ws = XLSX.utils.aoa_to_sheet(report);
         var ws_name = "Sheet1";
 
         function Workbook() {
-            if(!(this instanceof Workbook)) return new Workbook();
+            if (!(this instanceof Workbook)) return new Workbook();
             this.SheetNames = [];
             this.Sheets = {};
         }
-         
+
         var wb = new Workbook();
-         
+
         wb.SheetNames.push(ws_name);
         wb.Sheets[ws_name] = ws;
-        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        var wbout = XLSX.write(wb, {
+            bookType: 'xlsx',
+            bookSST: true,
+            type: 'binary'
+        });
+
         function s2ab(s) {
             var buf = new ArrayBuffer(s.length);
             var view = new Uint8Array(buf);
-            for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
             return buf;
         }
 
         // TODO add button to download report?
-        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), document.title + " - Content Validation Report.xlsx")
+        saveAs(new Blob([s2ab(wbout)], {
+            type: "application/octet-stream"
+        }), document.title + " - Content Validation Report.xlsx")
 
     }
 })
