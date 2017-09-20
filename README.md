@@ -2,7 +2,7 @@ Content Validator
 =====
 This *Content Validator* tool is a Chrome-only extension to compare an Excel (.xlsx) spreadsheet with a given webpage's text content.
 
-### Adding the unpacked extension to Chrome
+### Installation
 _(Developers only)_
 1. Download the entire content-validator directory  
    On GitHub: 
@@ -15,7 +15,7 @@ _(Developers only)_
 6. That's it! You should see a new icon ![alt text](https://github.com/tepahk/content-validator/raw/master/assets/images/icon.png "Content Validator icon") pop into the top right corner of your browser.
 
 
-### Using the extension
+### Usage
 1. Navigate to the page you want to content validate
 2. Click the *Content Validator* icon ![alt text](https://github.com/tepahk/content-validator/raw/master/assets/images/icon.png "Content Validator icon")
 3. Click the Choose File input
