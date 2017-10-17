@@ -6,11 +6,12 @@
   "version": "1.0",
 
   "browser_action": {
-   "default_icon": "/assets/images/icon.png",
-   "default_popup": "popup.html"
+    "default_icon": "/assets/images/icon.png",
+    "default_popup": "popup.html"
   },
   "permissions": [
-   "activeTab",
-   "https://ajax.googleapis.com/"
-   ]
+    "activeTab",
+    "http://*/",
+    "https://*/"
+  ]
 }
