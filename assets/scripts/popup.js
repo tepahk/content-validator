@@ -54,13 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Inject content script
         chrome.tabs.executeScript(null, {
-            file: "/assets/scripts/FileSaver.min.js"
+            file: "/assets/scripts/libs/FileSaver.min.js"
         })
         chrome.tabs.executeScript(null, {
-            file: "/assets/scripts/jszip.js"
+            file: "/assets/scripts/libs/jszip.js"
         });
         chrome.tabs.executeScript(null, {
-            file: "/assets/scripts/xlsx.js"
+            file: "/assets/scripts/libs/xlsx.js"
         });
         chrome.tabs.executeScript(null, {
             file: "/assets/scripts/content.js"
