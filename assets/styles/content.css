@@ -5,8 +5,8 @@ But it's probably better than inline styles
 
 .content-validated{
 	background: rgba(139, 195, 74, 0.6) !important;
-    display: inline-block !important;
-	position: relative !important;
+  display: inline-block !important;
+  position: relative !important;
 }
 
 .content-validated::before{
