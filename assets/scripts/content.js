@@ -25,8 +25,8 @@ function cleanString(str, cleanForRegex) {
 
 // Modified from https://j11y.io/javascript/find-and-replace-text-with-javascript/
 // TODO this should iterate through all nodes and see if it matches one of the items in the list, not the opposite - we need to be able to track negatives as well 
-function findAndReplace(searchText, replacement, searchNode, id) {
-    if (!searchText || typeof replacement === 'undefined') {
+function findAndReplace(searchText, searchNode, id, cell) {
+    if (!searchText) {
         // Throw error here if you want...
         return;
     }
@@ -36,22 +36,27 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         new RegExp('^' + searchText + '$', 'gi') : searchText,
         childNodes = (searchNode || document.body).childNodes,
         cnLength = childNodes.length,
-        excludes = ['html', 'head', 'style', 'title', 'link', 'meta', 'script', 'object', 'iframe'];
+        excludes = ['html', 'head', 'style', 'title', 'link', 'meta', 'script', 'object', 'iframe'],
+        textEls = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
 
     while (cnLength--) {
         var currentNode = childNodes[cnLength],
-            currentNodeText = currentNode.textContent;
+            currentNodeText = currentNode.textContent,
+            currentNodeTag = currentNode.nodeName === '#text' ? 'span' : currentNode.nodeName.toLowerCase(),
+            isTextNode = currentNode.nodeType === 3 || textEls.indexOf( currentNode.nodeName.toLowerCase() ) > -1;
+
+            // TODO "is text node" should be determined by if childnodes are ONLY a's, ems, strongs, or spans basically
 
         currentNodeText = cleanString(currentNodeText);
 
-        if (currentNode.nodeType === 1 && excludes.indexOf(currentNode.nodeName.toLowerCase()) === -1) {
-            findAndReplace(searchText, replacement, currentNode, id);
+        if ( !isTextNode && excludes.indexOf(currentNode.nodeName.toLowerCase()) === -1) {
+            findAndReplace(searchText, currentNode, id);
         }
 
         // Checks if node is NOT text
         // Checks if node does not match the search string regex
         // Checks if node has already been validated (TODO) - this is an issue because its not actually searching the page vertically since it has to loop through each node in the DOM
-        if (currentNode.nodeType !== 3 || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1) {
+        if ( !isTextNode  || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1) {
             // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
             //     - this still allows for one cell to find multiple matches though!!!
             // || typeof validationStatus[id] !== 'undefined' - checks if this cell string has already been searched for and found
@@ -71,14 +76,13 @@ function findAndReplace(searchText, replacement, searchNode, id) {
         // Actually replace content with decorative span
         var parent = currentNode.parentNode,
             frag = (function() {
-                var html = currentNodeText.replace(regex, replacement),
-                    wrap = document.createElement('span'),
+                var html = currentNodeText,
+                    wrap = document.createElement(currentNodeTag),
                     frag = document.createDocumentFragment();
+                wrap.className = 'content-validated';
+                wrap.title = 'Validated against cell ' + id;
                 wrap.innerHTML = html;
-                while (wrap.firstChild) {
-                    frag.appendChild(wrap.firstChild);
-                }
-                return frag;
+                return wrap;
             })();
         parent.insertBefore(frag, currentNode);
         parent.removeChild(currentNode);
@@ -109,7 +113,7 @@ chrome.runtime.onMessage.addListener(function(workbook) {
                 if (thisCell.v) {
                     // Check for this content on the page
                     var value = thisCell.v;
-                    findAndReplace(cleanString(value, true), '<span class="content-validated" title="Validated against cell ' + cell + '">' + value + '</span>', null, cell);
+                    findAndReplace(cleanString(value, true), null, cell);
 
                     // Add this item to the report
                     report.push([value, validationStatus[cell]])
