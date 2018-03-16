@@ -1,0 +1,53 @@
+@import 'vars';
+@import 'animation';
+@import 'content-validations';
+
+#content-validator{
+  background: $light-gray;
+  color: $dark-gray;
+  text-align: center;
+  font-family: "Roboto Mono", monospace;
+
+  h1{
+    font-size: 16px;
+  }
+
+  .form{
+    background: $light-gray;
+    padding: 1em;
+    position: relative;
+  }
+
+  .loading-icon{
+    display: none;
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    border: .25rem solid $medium-gray;
+    border-top-color: $dark-gray;
+    animation: spin 1s infinite linear;
+    position: absolute;
+    top: .5em;
+    right: 1em;
+  }
+
+  .loading .loading-icon{
+    display: block;
+  }
+
+  label{
+    font-weight: bold;
+    margin: 0 0 .5em;
+    display: block;
+    border-bottom: 1px solid $medium-gray;
+    padding: 0 0 .5em;
+  }
+
+  input{
+    outline: none;
+    display: block;
+    min-width: 250px;
+    padding: 5px;
+    text-align: center;
+  }
+}

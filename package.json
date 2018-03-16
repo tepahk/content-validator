@@ -1,0 +1,24 @@
+{
+  "name": "content-validator",
+  "version": "1.0.0",
+  "description": "Content validation extension for Chrome",
+  "main": "popup.html",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tepahk/content-validator.git"
+  },
+  "author": "Tessa Pahkamaa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tepahk/content-validator/issues"
+  },
+  "homepage": "https://github.com/tepahk/content-validator#readme"
+}

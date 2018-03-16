@@ -1,0 +1,26 @@
+@import 'vars';
+
+/*
+Yes it is terrible that these all have to have !importants on them
+But it's probably better than inline styles
+*/
+
+.content-validated{
+  background: transparentize($green, 0.4) !important;
+  display: inline-block !important;
+  position: relative !important;
+
+  &::before{
+    content: "";
+    position: absolute !important;
+    margin-left: 3px !important;
+    margin-top: 4px !important;
+    width: 12px !important;
+    height: 5px !important;
+    border-bottom: solid 3px $green !important;
+    border-left: solid 3px $green !important;
+    transform: rotate(-45deg) translateY(-50%) !important;
+    left: -20px !important;
+    top: 0.25em !important;
+  }
+}
