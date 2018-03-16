@@ -23,6 +23,22 @@ function cleanString(str, cleanForRegex) {
     return newStr;
 }
 
+function isMatch(string, cellId){
+    var $textEls = $('h1, h2, h3, h4, h5, h6, p, li');
+
+    var $results = $textEls.filter(':contains("'+string+'")');
+
+    $results.addClass('content-validated');
+
+    if( cellId ){
+        $results.each(function(){
+            $(this).attr('title', 'Validated against cell ' + cellId)
+        })
+    }
+
+    console.log( $results );
+}
+
 // Modified from https://j11y.io/javascript/find-and-replace-text-with-javascript/
 // TODO this should iterate through all nodes and see if it matches one of the items in the list, not the opposite - we need to be able to track negatives as well 
 function findAndReplace(searchText, searchNode, id, cell) {
@@ -31,63 +47,65 @@ function findAndReplace(searchText, searchNode, id, cell) {
         return;
     }
 
+    isMatch(searchText);
+
     // This regex current ignores case!!
-    var regex = typeof searchText === 'string' ?
-        new RegExp('^' + searchText + '$', 'gi') : searchText,
-        childNodes = (searchNode || document.body).childNodes,
-        cnLength = childNodes.length,
-        excludes = ['html', 'head', 'style', 'title', 'link', 'meta', 'script', 'object', 'iframe'],
-        textEls = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+    // var regex = typeof searchText === 'string' ?
+    //     new RegExp('^' + searchText + '$', 'gi') : searchText,
+    //     childNodes = (searchNode || document.body).childNodes,
+    //     cnLength = childNodes.length,
+    //     excludes = ['html', 'head', 'style', 'title', 'link', 'meta', 'script', 'object', 'iframe'],
+    //     textEls = [];
 
-    while (cnLength--) {
-        var currentNode = childNodes[cnLength],
-            currentNodeText = currentNode.textContent,
-            currentNodeTag = currentNode.nodeName === '#text' ? 'span' : currentNode.nodeName.toLowerCase(),
-            isTextNode = currentNode.nodeType === 3 || textEls.indexOf( currentNode.nodeName.toLowerCase() ) > -1;
+    // while (cnLength--) {
+    //     var currentNode = childNodes[cnLength],
+    //         currentNodeText = currentNode.textContent,
+    //         currentNodeTag = currentNode.nodeName === '#text' ? 'span' : currentNode.nodeName.toLowerCase(),
+    //         isTextNode = currentNode.nodeType === 3 || textEls.indexOf( currentNode.nodeName.toLowerCase() ) > -1;
 
-            // TODO "is text node" should be determined by if childnodes are ONLY a's, ems, strongs, or spans basically
+    //         // TODO "is text node" should be determined by if childnodes are ONLY a's, ems, strongs, or spans basically
 
-        currentNodeText = cleanString(currentNodeText);
+    //     currentNodeText = cleanString(currentNodeText);
 
-        if ( !isTextNode && excludes.indexOf(currentNode.nodeName.toLowerCase()) === -1) {
-            findAndReplace(searchText, currentNode, id);
-        }
+    //     if ( !isTextNode && excludes.indexOf(currentNode.nodeName.toLowerCase()) === -1) {
+    //         findAndReplace(searchText, currentNode, id);
+    //     }
 
-        // Checks if node is NOT text
-        // Checks if node does not match the search string regex
-        // Checks if node has already been validated (TODO) - this is an issue because its not actually searching the page vertically since it has to loop through each node in the DOM
-        if ( !isTextNode  || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1) {
-            // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
-            //     - this still allows for one cell to find multiple matches though!!!
-            // || typeof validationStatus[id] !== 'undefined' - checks if this cell string has already been searched for and found
-            // Abandon ship and move on to the next item in the loop
-            continue;
-        }
+    //     // Checks if node is NOT text
+    //     // Checks if node does not match the search string regex
+    //     // Checks if node has already been validated (TODO) - this is an issue because its not actually searching the page vertically since it has to loop through each node in the DOM
+    //     if ( !isTextNode  || !regex.test(currentNodeText) || currentNode.parentNode.className.indexOf('content-validated') > -1) {
+    //         // || currentNode.parentNode.className.indexOf('content-validated') > -1 - checks if this content has already been validated
+    //         //     - this still allows for one cell to find multiple matches though!!!
+    //         // || typeof validationStatus[id] !== 'undefined' - checks if this cell string has already been searched for and found
+    //         // Abandon ship and move on to the next item in the loop
+    //         continue;
+    //     }
 
-        // Update validation status to show number of matches
-        if (typeof validationStatus[id] == 'undefined') {
-            validationStatus[id] = 1;
-        } else {
-            validationStatus[id] = validationStatus[id] + 1;
-        }
+    //     // Update validation status to show number of matches
+    //     if (typeof validationStatus[id] == 'undefined') {
+    //         validationStatus[id] = 1;
+    //     } else {
+    //         validationStatus[id] = validationStatus[id] + 1;
+    //     }
 
-        //validationStatus[id] = true;
+    //     //validationStatus[id] = true;
 
-        // Actually replace content with decorative span
-        var parent = currentNode.parentNode,
-            frag = (function() {
-                var html = currentNodeText,
-                    wrap = document.createElement(currentNodeTag),
-                    frag = document.createDocumentFragment();
-                wrap.className = 'content-validated';
-                wrap.title = 'Validated against cell ' + id;
-                wrap.innerHTML = html;
-                return wrap;
-            })();
-        parent.insertBefore(frag, currentNode);
-        parent.removeChild(currentNode);
+    //     // Actually replace content with decorative span
+    //     var parent = currentNode.parentNode,
+    //         frag = (function() {
+    //             var html = currentNodeText,
+    //                 wrap = document.createElement(currentNodeTag),
+    //                 frag = document.createDocumentFragment();
+    //             wrap.className = 'content-validated';
+    //             wrap.title = 'Validated against cell ' + id;
+    //             wrap.innerHTML = html;
+    //             return wrap;
+    //         })();
+    //     parent.insertBefore(frag, currentNode);
+    //     parent.removeChild(currentNode);
 
-    }
+    // }
 }
 
 function nextChar(c) {
