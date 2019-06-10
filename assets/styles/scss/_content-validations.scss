@@ -6,7 +6,7 @@ But it's probably better than inline styles
 */
 
 .content-validated{
-  background: transparentize($green, 0.4) !important;
+  background: transparentize($green, 0.8) !important;
   display: inline-block !important;
   position: relative !important;
 
@@ -19,8 +19,8 @@ But it's probably better than inline styles
     height: 5px !important;
     border-bottom: solid 3px $green !important;
     border-left: solid 3px $green !important;
-    transform: rotate(-45deg) translateY(-50%) !important;
+    transform: rotate(-45deg) !important;
     left: -20px !important;
-    top: 0.25em !important;
+    top: 0.2em !important;
   }
 }
